@@ -2,55 +2,7 @@
 <html>
 <head>
   <title>MCQ Quiz</title>
-  <script>
-    let timer;
-    let timeLeft = 1800; // 30 mins in seconds
-
-    window.onload = function() {
-      updateTimer();
-      timer = setInterval(countDown, 1000);
-    };
-
-    function countDown() {
-      if (timeLeft <= 0) {
-        clearInterval(timer);
-        alert("Time's up! Auto-submitting.");
-        submitForm();
-      } else {
-        timeLeft--;
-        updateTimer();
-      }
-    }
-
-    function updateTimer() {
-      const minutes = Math.floor(timeLeft / 60);
-      const seconds = timeLeft % 60;
-      document.getElementById("timer").textContent =
-        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    }
-
-    function submitForm(event) {
-      if (event) event.preventDefault();
-
-      const form = document.getElementById("quizForm");
-      const formData = new FormData(form);
-      const jsonData = {};
-
-      formData.forEach((value, key) => {
-        jsonData[key] = value;
-      });
-
-      fetch("https://script.google.com/macros/s/AKfycbwaSvuNP0zAOmQxApY__5cVyq7hchrCW7wOv089Ri3tn0ui1v5oCueybiTPVvzlcpC8/exec", {
-        method: "POST",
-        body: JSON.stringify(jsonData),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      })
-      .then(response => alert("Responses submitted successfully!"))
-      .catch(error => alert("Error submitting responses: " + error));
-    }
-  </script>
+  <base target="_top">
 </head>
 <body>
   <h1>MCQ Quiz</h1>
@@ -61,17 +13,16 @@
 
     <label for="studentName">Student Name:</label>
     <input type="text" id="studentName" name="studentName" required><br><br>
-    <!-- Questions start -->
-    <!-- Java/Javascript Questions -->
-    <p>1. What is the effect of declaring a variable as volatile in Java?</p>
-    <label><input type="radio" name="q1" value="A"> A) Ensures a variable’s value never changes</label><br>
-    <label><input type="radio" name="q1" value="B"> B) Guarantees single-threaded access to a variable</label><br>
-    <label><input type="radio" name="q1" value="C"> C) Signals that a variable’s value may change unexpectedly</label><br>
-    <label><input type="radio" name="q1" value="D"> D) Forces simultaneous access to a variable by multiple threads</label><br>
 
-    <!-- Question 2 to 45 below -->
+    <!-- FULL 45 QUESTIONS HERE -->
+    <!-- (Paste all questions sections here as already formatted) -->
+       <p>1. What is the effect of declaring a variable as volatile in Java?</p>
+      <label><input type="radio" name="q1" value="A"> A) Ensures a variable’s value never changes</label><br>
+      <label><input type="radio" name="q1" value="B"> B) Guarantees single-threaded access to a variable</label><br>
+      <label><input type="radio" name="q1" value="C"> C) Signals that a variable’s value may change unexpectedly</label><br>
+      <label><input type="radio" name="q1" value="D"> D) Forces simultaneous access to a variable by multiple threads</label><br>
 
-    <p>2. What does the finally block do in Java exception handling?</p>
+<p>2. What does the finally block do in Java exception handling?</p>
     <label><input type="radio" name="q2" value="A"> A) Only if an exception occurs</label><br>
     <label><input type="radio" name="q2" value="B"> B) Only if no exception occurs</label><br>
     <label><input type="radio" name="q2" value="C"> C) Regardless of whether an exception occurs or not</label><br>
@@ -349,7 +300,30 @@
 
 <!-- End of Questions -->
     <br>
-    <button type="submit">Submit</button>
+    <button id="submitBtn" type="submit">Submit</button>
   </form>
+
+  <script>
+    let timer;
+    let timeLeft = 1800;
+    window.onload = () => { updateTimer(); timer = setInterval(countDown,1000); };
+    function countDown() {
+      if(timeLeft<=0){ clearInterval(timer); alert("Time's up! Auto-submitting."); submitForm(); }
+      else { timeLeft--; updateTimer(); }
+    }
+    function updateTimer() {
+      const m = Math.floor(timeLeft/60), s = timeLeft%60;
+      document.getElementById("timer").textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    }
+    function submitForm(e){
+      if(e) e.preventDefault();
+      document.getElementById("submitBtn").disabled=true;
+      const data = Object.fromEntries(new FormData(document.getElementById("quizForm")));
+      google.script.run
+        .withSuccessHandler(() => { alert("Responses submitted successfully"); document.getElementById("quizForm").reset(); })
+        .withFailureHandler(err => { alert("Error: " + err.message); })
+        .submitData(data);
+    }
+  </script>
 </body>
 </html>
