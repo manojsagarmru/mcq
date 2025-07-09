@@ -1,8 +1,66 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>MCQ Quiz</title>
   <base target="_top">
+  <title>MCQ Quiz</title>
+  <style>
+    body { user-select: none; -webkit-user-select: none; -moz-user-select: none; }
+    img, a { -webkit-user-drag: none; user-drag: none; }
+  </style>
+  <script>
+    // Your deployed Apps Script Web App URL
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxNmMUOAjJEW6nkTPwJd47Sk3A8pVl0thw5WTPhFBdYLX8_VRoxatx5uPi-0h3YSEl4/exec";
+
+    // Disable right‑click and text selection
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('dragstart', e => e.preventDefault());
+    document.addEventListener('selectstart', e => e.preventDefault());
+
+    // Countdown timer setup
+    let timer, timeLeft = 1800; // 30 mins
+    window.onload = () => {
+      updateTimer();
+      timer = setInterval(countDown, 1000);
+    };
+    function countDown() {
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        alert("Time's up! Auto-submitting.");
+        submitForm();
+      } else {
+        timeLeft--;
+        updateTimer();
+      }
+    }
+    function updateTimer() {
+      const m = String(Math.floor(timeLeft/60)).padStart(2,'0');
+      const s = String(timeLeft%60).padStart(2,'0');
+      document.getElementById("timer").textContent = `${m}:${s}`;
+    }
+
+    // Form submission using fetch
+    function submitForm(e) {
+      if (e) e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      const data = Object.fromEntries(new FormData(document.getElementById('quizForm')));
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.text())
+      .then(text => {
+        alert('Responses submitted successfully!');
+        document.getElementById('quizForm').reset();
+        btn.disabled = false;
+      })
+      .catch(error => {
+        alert('Error submitting responses: ' + error.message);
+        btn.disabled = false;
+      });
+    }
+  </script>
 </head>
 <body>
   <h1>MCQ Quiz</h1>
@@ -15,360 +73,15 @@
     <input type="text" id="studentName" name="studentName" required><br><br>
 
     <!-- FULL 45 QUESTIONS HERE -->
-    <!-- (Paste all questions sections here as already formatted) -->
-       <p>1. What is the effect of declaring a variable as volatile in Java?</p>
-      <label><input type="radio" name="q1" value="A"> A) Ensures a variable’s value never changes</label><br>
-      <label><input type="radio" name="q1" value="B"> B) Guarantees single-threaded access to a variable</label><br>
-      <label><input type="radio" name="q1" value="C"> C) Signals that a variable’s value may change unexpectedly</label><br>
-      <label><input type="radio" name="q1" value="D"> D) Forces simultaneous access to a variable by multiple threads</label><br>
-
-<p>2. What does the finally block do in Java exception handling?</p>
-    <label><input type="radio" name="q2" value="A"> A) Only if an exception occurs</label><br>
-    <label><input type="radio" name="q2" value="B"> B) Only if no exception occurs</label><br>
-    <label><input type="radio" name="q2" value="C"> C) Regardless of whether an exception occurs or not</label><br>
-    <label><input type="radio" name="q2" value="D"> D) It’s not a valid construct in Java</label><br>
-
-    <p>3. Which statement about abstract classes in Java is correct?</p>
-    <label><input type="radio" name="q3" value="A"> A) They cannot have constructors</label><br>
-    <label><input type="radio" name="q3" value="B"> B) They must implement all methods declared abstract</label><br>
-    <label><input type="radio" name="q3" value="C"> C) They can be instantiated</label><br>
-    <label><input type="radio" name="q3" value="D"> D) They are used to create objects directly</label><br>
-
-    <p>4. What does the static keyword denote when applied to a variable or method?</p>
-    <label><input type="radio" name="q4" value="A"> A) Indicates a variable is constant</label><br>
-    <label><input type="radio" name="q4" value="B"> B) Denotes a method or variable belonging to the class rather than instances</label><br>
-    <label><input type="radio" name="q4" value="C"> C) Specifies a method that cannot be overridden</label><br>
-    <label><input type="radio" name="q4" value="D"> D) Signals a variable that can be accessed only within its class</label><br>
-
-    <p>5. What is the result of attempting to override a private method in a subclass?</p>
-    <label><input type="radio" name="q5" value="A"> A) Compilation error</label><br>
-    <label><input type="radio" name="q5" value="B"> B) The subclass method overrides the parent method</label><br>
-    <label><input type="radio" name="q5" value="C"> C) The subclass method hides the parent method</label><br>
-    <label><input type="radio" name="q5" value="D"> D) Runtime exception</label><br>
-
-    <!-- Additional questions continue similarly from q6 to q45 -->
-
-    <p>6. Which of the following statements about HashMap and ConcurrentHashMap is correct?</p>
-    <label><input type="radio" name="q6" value="A"> A) Both allow null keys and null values</label><br>
-    <label><input type="radio" name="q6" value="B"> B) ConcurrentHashMap allows null keys but not null values</label><br>
-    <label><input type="radio" name="q6" value="C"> C) HashMap allows one null key, but ConcurrentHashMap allows neither null keys nor null values</label><br>
-    <label><input type="radio" name="q6" value="D"> D) Both do not allow null keys or null values</label><br>
-
-    <p>7. Which method will throw UnsupportedOperationException when called on an unmodifiable collection returned by Collections.unmodifiableList()?</p>
-    <label><input type="radio" name="q7" value="A"> A) get(int index)</label><br>
-    <label><input type="radio" name="q7" value="B"> B) contains(Object o)</label><br>
-    <label><input type="radio" name="q7" value="C"> C) add(Object o)</label><br>
-    <label><input type="radio" name="q7" value="D"> D) size()</label><br>
-
-    <p>8. What will happen if you modify a collection while iterating over it with a standard Iterator?</p>
-    <label><input type="radio" name="q8" value="A"> A) The modification is reflected immediately</label><br>
-    <label><input type="radio" name="q8" value="B"> B) The collection is locked</label><br>
-    <label><input type="radio" name="q8" value="C"> C) A ConcurrentModificationException may be thrown</label><br>
-    <label><input type="radio" name="q8" value="D"> D) The iterator skips the modified element</label><br>
-
-    <p>9. Which of the following is true about the fail-fast property of Java collections?</p>
-    <label><input type="radio" name="q9" value="A"> A) All Java collections are fail-fast</label><br>
-    <label><input type="radio" name="q9" value="B"> B) Fail-fast iterators throw an exception if the collection is structurally modified after the iterator is created</label><br>
-    <label><input type="radio" name="q9" value="C"> C) Fail-fast collections are thread-safe</label><br>
-    <label><input type="radio" name="q9" value="D"> D) Fail-fast collections never throw exceptions</label><br>
-
-    <p>10. Which jQuery method removes the selected element from the DOM?</p>
-    <label><input type="radio" name="q10" value="A"> A) .delete()</label><br>
-    <label><input type="radio" name="q10" value="B"> B) .detach()</label><br>
-    <label><input type="radio" name="q10" value="C"> C) .remove()</label><br>
-    <label><input type="radio" name="q10" value="D"> D) .erase()</label><br>
-
-<p>11. Consider the following code:
-<br>let x = 5;
-<br>let result = (x > 3) ? 'Yes' : 'No';
-<br>console.log(result);
-</p>
-<label><input type="radio" name="q11" value="A"> A) 'Yes'</label><br>
-<label><input type="radio" name="q11" value="B"> B) 'No'</label><br>
-<label><input type="radio" name="q11" value="C"> C) 'true'</label><br>
-<label><input type="radio" name="q11" value="D"> D) 'false'</label><br>
-
-<p>12. How do you define a function in JavaScript?</p>
-<label><input type="radio" name="q12" value="A"> A) function = myFunc() {}</label><br>
-<label><input type="radio" name="q12" value="B"> B) function: myFunc() {}</label><br>
-<label><input type="radio" name="q12" value="C"> C) function myFunc() {}</label><br>
-<label><input type="radio" name="q12" value="D"> D) myFunc() = function {}</label><br>
-
-<p>13. What is the result of trying to extend the length of an array using a function in JavaScript?</p>
-<label><input type="radio" name="q13" value="A"> A) 3</label><br>
-<label><input type="radio" name="q13" value="B"> B) 4</label><br>
-<label><input type="radio" name="q13" value="C"> C) 5</label><br>
-<label><input type="radio" name="q13" value="D"> D) Error</label><br>
-
-<p>14. Which jQuery method is used to document-ready event?</p>
-<label><input type="radio" name="q14" value="A"> A) .onDocumentReady()</label><br>
-<label><input type="radio" name="q14" value="B"> B) .ready()</label><br>
-<label><input type="radio" name="q14" value="C"> C) .load()</label><br>
-<label><input type="radio" name="q14" value="D"> D) .documentReady()</label><br>
-
-<p>15. Which jQuery method is used to select elements that are hidden?</p>
-<label><input type="radio" name="q15" value="A"> A) .hidden()</label><br>
-<label><input type="radio" name="q15" value="B"> B) .findHidden()</label><br>
-<label><input type="radio" name="q15" value="C"> C) .is(':hidden')</label><br>
-<label><input type="radio" name="q15" value="D"> D) $(':hidden')</label><br>
-
-<p>16. What will be the value of the following Python expression?<br>print(4 + 3 % 5)</p>
-<label><input type="radio" name="q16" value="A"> A) 7</label><br>
-<label><input type="radio" name="q16" value="B"> B) 2</label><br>
-<label><input type="radio" name="q16" value="C"> C) 4</label><br>
-<label><input type="radio" name="q16" value="D"> D) 1</label><br>
-
-<p>17. What will be the output of the following Python code?<br>i = 1<br>while True:<br>&nbsp;&nbsp;&nbsp;&nbsp;if i%3 == 0:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break<br>&nbsp;&nbsp;&nbsp;&nbsp;print(i)<br>&nbsp;&nbsp;&nbsp;&nbsp;i += 1</p>
-<label><input type="radio" name="q17" value="A"> A) 1 2</label><br>
-<label><input type="radio" name="q17" value="B"> B) 1 2 3</label><br>
-<label><input type="radio" name="q17" value="C"> C) SyntaxError</label><br>
-<label><input type="radio" name="q17" value="D"> D) none of the mentioned</label><br>
-
-<p>18. Python supports the creation of anonymous functions at runtime, using a construct called __________</p>
-<label><input type="radio" name="q18" value="A"> A) pi</label><br>
-<label><input type="radio" name="q18" value="B"> B) anonymous</label><br>
-<label><input type="radio" name="q18" value="C"> C) lambda</label><br>
-<label><input type="radio" name="q18" value="D"> D) none of the mentioned</label><br>
-
-<p>19. What will be the output of the following Python function?<br>print(min(max(False,-3,-4), 2, 7))</p>
-<label><input type="radio" name="q19" value="A"> A) -4</label><br>
-<label><input type="radio" name="q19" value="B"> B) -3</label><br>
-<label><input type="radio" name="q19" value="C"> C) 2</label><br>
-<label><input type="radio" name="q19" value="D"> D) False</label><br>
-
-<p>20. What will be the output of the following Python code snippet?<br>d1 = {"john":40, "peter":45}<br>d2 = {"john":466, "peter":45}<br>print(d1 == d2)</p>
-<label><input type="radio" name="q20" value="A"> A) True</label><br>
-<label><input type="radio" name="q20" value="B"> B) False</label><br>
-<label><input type="radio" name="q20" value="C"> C) None</label><br>
-<label><input type="radio" name="q20" value="D"> D) Error</label><br>
-
-<p>21. Which of these about a dictionary is false?</p>
-<label><input type="radio" name="q21" value="A"> A) The values of a dictionary can be accessed using keys</label><br>
-<label><input type="radio" name="q21" value="B"> B) The keys of a dictionary can be accessed using values</label><br>
-<label><input type="radio" name="q21" value="C"> C) Dictionaries aren’t ordered</label><br>
-<label><input type="radio" name="q21" value="D"> D) Dictionaries are mutable</label><br>
-
-<p>22. Which of the following is not a declaration of the dictionary?</p>
-<label><input type="radio" name="q22" value="A"> A) {1: ‘A’, 2: ‘B’}</label><br>
-<label><input type="radio" name="q22" value="B"> B) dict([[1,"A"],[2,"B"]])</label><br>
-<label><input type="radio" name="q22" value="C"> C) {1,"A",2"B"}</label><br>
-<label><input type="radio" name="q22" value="D"> D) { }</label><br>
-
-<p>23. What will be the output of the following Python code snippet?</p>
-<code>a={1:"A",2:"B",3:"C"}<br>print(a.get(1,4))</code><br>
-<label><input type="radio" name="q23" value="A"> A) 1</label><br>
-<label><input type="radio" name="q23" value="B"> B) A</label><br>
-<label><input type="radio" name="q23" value="C"> C) 4</label><br>
-<label><input type="radio" name="q23" value="D"> D) Invalid syntax for get method</label><br>
-
-<p>24. What will be the output of the following Python code?</p>
-<code>a={1:5,2:3,3:4}<br>a.pop(3)<br>print(a)</code><br>
-<label><input type="radio" name="q24" value="A"> A) {1: 5}</label><br>
-<label><input type="radio" name="q24" value="B"> B) {1: 5, 2: 3}</label><br>
-<label><input type="radio" name="q24" value="C"> C) Error, syntax error for pop() method</label><br>
-<label><input type="radio" name="q24" value="D"> D) {1: 5, 3: 4}</label><br>
-
-<p>25. Which of the following isn’t true about dictionary keys?</p>
-<label><input type="radio" name="q25" value="A"> A) More than one key isn’t allowed</label><br>
-<label><input type="radio" name="q25" value="B"> B) Keys must be immutable</label><br>
-<label><input type="radio" name="q25" value="C"> C) Keys must be integers</label><br>
-<label><input type="radio" name="q25" value="D"> D) When duplicate keys encountered, the last assignment wins</label><br>
-
-<p>26. What will be the output of the following Python code?</p>
-<code>a={1:"A",2:"B",3:"C"}<br>a.clear()<br>print(a)</code><br>
-<label><input type="radio" name="q26" value="A"> A) None</label><br>
-<label><input type="radio" name="q26" value="B"> B) { None:None, None:None, None:None}</label><br>
-<label><input type="radio" name="q26" value="C"> C) {1:None, 2:None, 3:None}</label><br>
-<label><input type="radio" name="q26" value="D"> D) { }</label><br>
-
-<p>27. If a is a dictionary with some key-value pairs, what does a.popitem() do?</p>
-<label><input type="radio" name="q27" value="A"> A) Removes an arbitrary element</label><br>
-<label><input type="radio" name="q27" value="B"> B) Removes all the key-value pairs</label><br>
-<label><input type="radio" name="q27" value="C"> C) Removes the key-value pair for the key given as an argument</label><br>
-<label><input type="radio" name="q27" value="D"> D) Invalid method for dictionary</label><br>
-
-<p>28. What will be the output of the following Python code snippet?</p>
-<code>total={}<br>def insert(items):<br>&nbsp;&nbsp;&nbsp;&nbsp;if items in total:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;total[items] += 1<br>&nbsp;&nbsp;&nbsp;&nbsp;else:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;total[items] = 1<br>insert('Apple')<br>insert('Ball')<br>insert('Apple')<br>print (len(total))</code><br>
-<label><input type="radio" name="q28" value="A"> A) 3</label><br>
-<label><input type="radio" name="q28" value="B"> B) 1</label><br>
-<label><input type="radio" name="q28" value="C"> C) 2</label><br>
-<label><input type="radio" name="q28" value="D"> D) 0</label><br>
-
-<p>29. What will be the output of the following Python code snippet?</p>
-<code>import collections<br>b=collections.Counter([2,2,3,4,4,4])<br>print(b.most_common(1))</code><br>
-<label><input type="radio" name="q29" value="A"> A) Counter({4: 3, 2: 2, 3: 1})</label><br>
-<label><input type="radio" name="q29" value="B"> B) {3:1}</label><br>
-<label><input type="radio" name="q29" value="C"> C) {4:3}</label><br>
-<label><input type="radio" name="q29" value="D"> D) [(4, 3)]</label><br>
-
-<p>30. The following Python code is invalid.</p>
-<code>class demo(dict):<br>&nbsp;&nbsp;def __test__(self,key):<br>&nbsp;&nbsp;&nbsp;&nbsp;return []<br>a = demo()<br>a['test'] = 7<br>print(a)</code><br>
-<label><input type="radio" name="q30" value="A"> A) True</label><br>
-<label><input type="radio" name="q30" value="B"> B) False</label><br>
-
-<p>31. What is the output of the following Angular CLI command:<br>ng g c my-component --flat?</p>
-<label><input type="radio" name="q31" value="A"> A) A new component in a separate folder</label><br>
-<label><input type="radio" name="q31" value="B"> B) A new component in the app folder</label><br>
-<label><input type="radio" name="q31" value="C"> C) A new module</label><br>
-<label><input type="radio" name="q31" value="D"> D) A new service</label><br>
-
-<p>32. Which Angular CLI command would you use to add Angular Material to your project?</p>
-<label><input type="radio" name="q32" value="A"> A) ng add @angular/material</label><br>
-<label><input type="radio" name="q32" value="B"> B) ng install @angular/material</label><br>
-<label><input type="radio" name="q32" value="C"> C) ng generate @angular/material</label><br>
-<label><input type="radio" name="q32" value="D"> D) ng setup @angular/material</label><br>
-
-<p>33. What is a component in Angular?</p>
-<label><input type="radio" name="q33" value="A"> A) A CSS stylesheet</label><br>
-<label><input type="radio" name="q33" value="B"> B) A routing configuration</label><br>
-<label><input type="radio" name="q33" value="C"> C) A building block of Angular UI</label><br>
-<label><input type="radio" name="q33" value="D"> D) A server-side script</label><br>
-
-<p>34. Which file extension is used for Angular component templates?</p>
-<label><input type="radio" name="q34" value="A"> A) .html</label><br>
-<label><input type="radio" name="q34" value="B"> B) .css</label><br>
-<label><input type="radio" name="q34" value="C"> C) .ts</label><br>
-<label><input type="radio" name="q34" value="D"> D) .js</label><br>
-
-<p>35. In Angular, how do you bind a component's class property to an element in its template?</p>
-<label><input type="radio" name="q35" value="A"> A) {{ }}</label><br>
-<label><input type="radio" name="q35" value="B"> B) [ ]</label><br>
-<label><input type="radio" name="q35" value="C"> C) ( )</label><br>
-<label><input type="radio" name="q35" value="D"> D) [( )]</label><br>
-
-<p>36. Which Angular feature is used to display data in a component template dynamically?</p>
-<label><input type="radio" name="q36" value="A"> A) Directives</label><br>
-<label><input type="radio" name="q36" value="B"> B) Services</label><br>
-<label><input type="radio" name="q36" value="C"> C) Modules</label><br>
-<label><input type="radio" name="q36" value="D"> D) Pipes</label><br>
-
-<p>37. Which of the following is correct about prop in React?</p>
-<label><input type="radio" name="q37" value="A"> A) Can be changed inside another component</label><br>
-<label><input type="radio" name="q37" value="B"> B) Can be changed inside the component</label><br>
-<label><input type="radio" name="q37" value="C"> C) Cannot be changed in the component</label><br>
-<label><input type="radio" name="q37" value="D"> D) All of the mentioned</label><br>
-
-<p>38. Which of the following is true about React Hooks?</p>
-<label><input type="radio" name="q38" value="A"> A) Hooks can be used in class components</label><br>
-<label><input type="radio" name="q38" value="B"> B) Hooks can only be used in functional components</label><br>
-<label><input type="radio" name="q38" value="C"> C) Hooks are used to manage props</label><br>
-<label><input type="radio" name="q38" value="D"> D) Hooks are not supported in React</label><br>
-
-<p>39. What is ‘useContext’ in React used for?</p>
-<label><input type="radio" name="q39" value="A"> A) To manage state globally</label><br>
-<label><input type="radio" name="q39" value="B"> B) To create new components</label><br>
-<label><input type="radio" name="q39" value="C"> C) To perform side effects</label><br>
-<label><input type="radio" name="q39" value="D"> D) To retrieve data from an API</label><br>
-
-<p>40. Which of the following is the correct way to handle a click event in React?</p>
-<label><input type="radio" name="q40" value="A"> A) onClick=”handleClick()”</label><br>
-<label><input type="radio" name="q40" value="B"> B) onClick={handleClick}</label><br>
-<label><input type="radio" name="q40" value="C"> C) event=”handleClick”</label><br>
-<label><input type="radio" name="q40" value="D"> D) handleClick()</label><br>
-
-<p>41. Why is it recommended to avoid inline function definitions inside the render method?</p>
-<label><input type="radio" name="q41" value="A"> A) They can cause memory leaks</label><br>
-<label><input type="radio" name="q41" value="B"> B) They make the code less readable</label><br>
-<label><input type="radio" name="q41" value="C"> C) They can lead to unnecessary re-renders</label><br>
-<label><input type="radio" name="q41" value="D"> D) Inline functions are not supported in JSX</label><br>
-
-<p>42. What is a side effect in React?</p>
-<label><input type="radio" name="q42" value="A"> A) A change in component state</label><br>
-<label><input type="radio" name="q42" value="B"> B) An operation that affects other components</label><br>
-<label><input type="radio" name="q42" value="C"> C) Any operation that affects something outside the scope of the function being executed</label><br>
-<label><input type="radio" name="q42" value="D"> D) A bug that occurs during rendering</label><br>
-
-<p>43. What is the issue in this component definition?</p>
-<code>function MyComponent(props) { return &lt;h1&gt;{props.title}&lt;/h1&gt;; }</code><br>
-<label><input type="radio" name="q43" value="A"> A) Missing import statement for React</label><br>
-<label><input type="radio" name="q43" value="B"> B) Incorrect props usage</label><br>
-<label><input type="radio" name="q43" value="C"> C) Missing return statement</label><br>
-<label><input type="radio" name="q43" value="D"> D) No Issue</label><br>
-
-<p>44. What will be the output of this code snippet?</p>
-<code>class MyComponent extends React.Component {<br>constructor(props) {<br>super(props);<br>this.state = { count: 1 };<br>} render() {<br>return<br>{this.state.count}<br>; } }</code><br>
-<label><input type="radio" name="q44" value="A"> A) 1</label><br>
-<label><input type="radio" name="q44" value="B"> B) 0</label><br>
-<label><input type="radio" name="q44" value="C"> C) Undefined</label><br>
-<label><input type="radio" name="q44" value="D"> D) An Error Message</label><br>
-
+    <!-- Paste your questions here as formatted -->
 <p>45. In Angular, what is the output of &lt;p [innerText]="message"&gt;&lt;/p&gt; if the message property is 'Hello World'</p>
 <label><input type="radio" name="q45" value="A"> A) A paragraph with 'Hello World'</label><br>
 <label><input type="radio" name="q45" value="B"> B) A paragraph with 'message'</label><br>
 <label><input type="radio" name="q45" value="C"> C) A blank paragraph</label><br>
 <label><input type="radio" name="q45" value="D"> D) An error</label><br>
 
-<!-- End of Questions -->
     <br>
     <button id="submitBtn" type="submit">Submit</button>
   </form>
-
-<!--   <script>
-    let timer;
-    let timeLeft = 1800;
-    window.onload = () => { updateTimer(); timer = setInterval(countDown,1000); };
-    function countDown() {
-      if(timeLeft<=0){ clearInterval(timer); alert("Time's up! Auto-submitting."); submitForm(); }
-      else { timeLeft--; updateTimer(); }
-    }
-    function updateTimer() {
-      const m = Math.floor(timeLeft/60), s = timeLeft%60;
-      document.getElementById("timer").textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-    }
-    function submitForm(e){
-      if(e) e.preventDefault();
-      document.getElementById("submitBtn").disabled=true;
-      const data = Object.fromEntries(new FormData(document.getElementById("quizForm")));
-      google.script.run
-        .withSuccessHandler(() => { alert("Responses submitted successfully"); document.getElementById("quizForm").reset(); })
-        .withFailureHandler(err => { alert("Error: " + err.message); })
-        .submitData(data);
-    }
-  </script> -->
-  <script>
-  // 1) Your deployed Apps Script Web App URL:
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzztmIHbriqITA_z6M-unLHPYzEqBtLRUM2Kmyx36_ZPmTyEpGGVIEh7az2TUTFL4FE/exec";
-
-  // 2) Countdown timer (unchanged)
-  let timer, timeLeft = 1800;
-  window.onload = () => { updateTimer(); timer = setInterval(countDown,1000); };
-  function countDown() {
-    if (timeLeft <= 0) {
-      clearInterval(timer);
-      alert("Time's up! Auto-submitting.");
-      submitForm();
-    } else {
-      timeLeft--;
-      updateTimer();
-    }
-  }
-  function updateTimer() {
-    const m = Math.floor(timeLeft/60).toString().padStart(2,'0'),
-          s = (timeLeft%60).toString().padStart(2,'0');
-    document.getElementById("timer").textContent = `${m}:${s}`;
-  }
-
-  // 3) New submitForm using fetch
-  function submitForm(e) {
-    if (e) e.preventDefault();
-    document.getElementById("submitBtn").disabled = true;
-    const data = Object.fromEntries(new FormData(document.getElementById("quizForm")));
-
-    fetch(SCRIPT_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: new FormData(form)},{mode: 'cors'}
-    })
-    .then(r => r.text())
-    .then(text => {
-      alert("Responses submitted successfully!");
-      document.getElementById("quizForm").reset();
-    })
-    .catch(err => {
-      alert("Error submitting responses: " + err.message);
-      document.getElementById("submitBtn").disabled = false;
-    });
-  }
-</script>
 </body>
 </html>
