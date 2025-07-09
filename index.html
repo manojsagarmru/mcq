@@ -303,7 +303,7 @@
     <button id="submitBtn" type="submit">Submit</button>
   </form>
 
-  <script>
+<!--   <script>
     let timer;
     let timeLeft = 1800;
     window.onload = () => { updateTimer(); timer = setInterval(countDown,1000); };
@@ -324,6 +324,51 @@
         .withFailureHandler(err => { alert("Error: " + err.message); })
         .submitData(data);
     }
-  </script>
+  </script> -->
+  <script>
+  // 1) Your deployed Apps Script Web App URL:
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzztmIHbriqITA_z6M-unLHPYzEqBtLRUM2Kmyx36_ZPmTyEpGGVIEh7az2TUTFL4FE/exec";
+
+  // 2) Countdown timer (unchanged)
+  let timer, timeLeft = 1800;
+  window.onload = () => { updateTimer(); timer = setInterval(countDown,1000); };
+  function countDown() {
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      alert("Time's up! Auto-submitting.");
+      submitForm();
+    } else {
+      timeLeft--;
+      updateTimer();
+    }
+  }
+  function updateTimer() {
+    const m = Math.floor(timeLeft/60).toString().padStart(2,'0'),
+          s = (timeLeft%60).toString().padStart(2,'0');
+    document.getElementById("timer").textContent = `${m}:${s}`;
+  }
+
+  // 3) New submitForm using fetch
+  function submitForm(e) {
+    if (e) e.preventDefault();
+    document.getElementById("submitBtn").disabled = true;
+    const data = Object.fromEntries(new FormData(document.getElementById("quizForm")));
+
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: new FormData(form)},{mode: 'cors'}
+    })
+    .then(r => r.text())
+    .then(text => {
+      alert("Responses submitted successfully!");
+      document.getElementById("quizForm").reset();
+    })
+    .catch(err => {
+      alert("Error submitting responses: " + err.message);
+      document.getElementById("submitBtn").disabled = false;
+    });
+  }
+</script>
 </body>
 </html>
